@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>استبيان ميداني — مشروع NHSAST AgriBot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f7f5;
+      --card: #ffffff;
+      --primary: #14532d;
+      --primary-light: #166534;
+      --primary-soft: #dcfce7;
+      --accent: #0f766e;
+      --ink: #0f172a;
+      --ink-muted: #475569;
+      --border: #d1d5db;
+      --border-focus: #16a34a;
+      --danger: #b91c1c;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(160deg, #ecfdf5 0%, #f8fafc 45%, #f1f5f9 100%);
+      color: var(--ink);
+      line-height: 1.7;
+      min-height: 100vh;
+      padding: 24px 14px 60px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* Header Banner */
+    .hero {
+      background: linear-gradient(135deg, #0f2b5b 0%, #14532d 100%);
+      color: #ffffff;
+      border-radius: var(--radius);
+      padding: 28px 26px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset-inline-end: -40px;
+      top: -40px;
+      width: 170px;
+      height: 170px;
+      background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #dcfce7;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.35rem, 3.2vw, 1.8rem);
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 0.95rem;
+      color: #e2e8f0;
+    }
+
+    /* Sticky Progress Bar */
+    .progress-wrap {
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #16a34a, #0f766e);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    /* Section Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 24px 22px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .section-header span.opt {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      margin-inline-start: auto;
+      background: #f1f5f9;
+      padding: 2px 10px;
+      border-radius: 999px;
+    }
+
+    /* Form Controls */
+    .q-group {
+      margin-bottom: 22px;
+    }
+
+    .q-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .q-label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.98rem;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .q-label .req {
+      color: var(--danger);
+      margin-inline-start: 4px;
+    }
+
+    .q-hint {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      margin-top: -4px;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    textarea,
+    select {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--ink);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.14);
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    /* Interactive Option Tiles */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 9px;
+    }
+
+    @media (min-width: 580px) {
+      .options-grid.two-col {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .option-tile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      background: #fafafa;
+      font-size: 0.93rem;
+      font-weight: 600;
+      user-select: none;
+    }
+
+    .option-tile:hover {
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+
+    .option-tile input {
+      accent-color: var(--primary);
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .option-tile:has(input:checked) {
+      border-color: var(--primary);
+      background: #dcfce7;
+      color: var(--primary);
+    }
+
+    /* Specialist Toggle */
+    .toggle-btn {
+      width: 100%;
+      background: #f8fafc;
+      border: 1.5px dashed #94a3b8;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 13px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+
+    .toggle-btn:hover { background: #f1f5f9; }
+
+    .hidden { display: none !important; }
+
+    /* Submit Button */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 15px 20px;
+      font-family: inherit;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, #15803d 0%, #0f766e 100%);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(21, 128, 61, 0.25);
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    .btn-submit:hover { transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+    .status-banner {
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .status-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    /* Success Screen */
+    .success-card {
+      text-align: center;
+      padding: 36px 24px;
+    }
+
+    .success-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .success-card h2 {
+      font-size: 1.45rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .success-card p {
+      color: var(--ink-muted);
+      margin-bottom: 18px;
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: 1.5px solid var(--primary);
+      background: #ffffff;
+      color: var(--primary);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      margin-top: 22px;
+    }
+
+    .demo-note {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #fef9c3;
+      border: 1px solid #fde047;
+      color: #854d0e;
+      border-radius: 10px;
+      font-size: 0.83rem;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <div class="badge">المدرسة الوطنية العليا لتكنولوجيا الأنظمة المستقلة — NHSAST AgriBot</div>
+      <h1>استبيان ميداني سريع: تحديات دكّ التربة والمبيدات في الفلاحة الجزائرية</h1>
+      <p>السلام عليكم، نعمل على تطوير روبوت فلاحي جزائري خفيف الوزن (&le; 28 كغ) للرش الانتقائي الدقيق للأعشاب وحماية التربة من دكّ الجرارات. إجاباتكم الصادقة (دقيقتان فقط) تساعدنا على تصميم حل واقعي يناسب الفلاح الجزائري. جميع البيانات سرية وتُستخدم لأغراض البحث والتطوير فقط.</p>
+    </header>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-top">
+        <span>تقدّم الإجابة</span>
+        <span id="progressText">0% مكتمل</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <form id="agriForm" novalidate>
+      <!-- Section 1 -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-num">1</div>
+          <h2>معلومات المستثمرة والمحصول</h2>
+        </div>
+
+        <div class="q-group">
+          <label class="q-label" for="wilaya">س1. الولاية والمنطقة الفلاحية؟ <span class="req">*</span></label>
+          <input type="text" id="wilaya" name="wilaya" required placeholder="مثال: وادي سوف، متيجة، عين الدفلى، سطيف، سوق أهراس..." />
+        </div>
+
+        <div class="q-group">
+          <span class="q-label">س2. ما هو المحصول الرئيسي (أو المحاصيل) في مستثمرتك؟ <span class="req">*</span></span>
+          <span class="q-hint">يمكنك اختيار أكثر من إجابة</span>
+          <div class="options-grid two-col">
+            <label class="option-tile"><input type="checkbox" name="crops" value="البطاطا (محاصيل الخطوط والمصاطب)" /> البطاطا (محاصيل الخطوط والمصاطب)</label>
+            <label class="option-tile"><input type="checkbox" name="crops" value="الطماطم الصناعية أو الخضر" /> الطماطم الصناعية أو الخضر (فلفل، بصل...)</label>
+            <label class="option-tile"><input type="checkbox" name="crops" value="الحبوب (القمح / الشعير)" /> الحبوب (القمح الصلب، اللين، الشعير)</label>
+            <label class="option-tile"><input type="checkbox" name="crops" value="أخرى" id="cropOtherCheck" /> أخرى</label>
+          </div>
+          <input type="text" id="cropOtherText" name="crop_other" class="hidden" style="margin-top:10px;" placeholder="يرجى تحديد المحصول الآخر..." />
+        </div>
+
+        <div class="q-group">
+          <span class="q-label">س3. ما هي المساحة المزروعة تقريباً (بالهكتار)؟ <span class="req">*</span></span>
+          <div class="options-grid two-col">
+            <label class="option-tile"><input type="radio" name="farm_size" value="أقل من 5 هكتارات" required /> أقل من 5 هكتارات</label>
+            <label class="option-tile"><input type="radio" name="farm_size" value="5 إلى 20 هكتاراً" /> من 5 إلى 20 هكتاراً</label>
+            <label class="option-tile"><input type="radio" name="farm_size" value="20 إلى 50 هكتاراً" /> من 20 إلى 50 هكتاراً</label>
+            <label class="option-tile"><input type="radio" name="farm_size" value="أكثر من 50 هكتاراً" /> أكثر من 50 هكتاراً</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-num">2</div>
+          <h2>حجم المشكلة الميدانية — الدكّ والمبيدات والتكلفة</h2>
+        </div>
+
+        <div class="q-group">
+          <span class="q-label">س4. هل يسبب دخول الجرار الثقيل (التراكتور) دكّاً للتربة (غطس الأرض) أو يمنعك من الرش في الوقت المناسب بعد المطر أو السقي؟ <span class="req">*</span></span>
+          <div class="options-grid">
+            <label class="option-tile"><input type="radio" name="compaction_issue" value="نعم، بشكل كبير ويؤثر مباشرة على المردود" required /> نعم، بشكل كبير ويؤثر مباشرة على المردود</label>
+            <label class="option-tile"><input type="radio" name="compaction_issue" value="أحياناً، خاصة في التربة الرطبة أو الطينية" /> أحياناً، خاصة في التربة الرطبة أو الطينية</label>
+            <label class="option-tile"><input type="radio" name="compaction_issue" value="نادراً / لا يسبب لي مشكلة" /> نادراً / لا يسبب لي مشكلة</label>
+          </div>
+        </div>
+
+        <div class="q-group">
+          <span class="q-label">س5. هل لاحظت أن الرش الشامل بمبيدات الأعشاب يُجهد المحصول أو يقلل من حجم ونوعية المنتوج (مثل صِغر حبة القمح أو ضعف نمو البطاطا)؟ <span class="req">*</span></span>
+          <div class="options-grid">
+            <label class="option-tile"><input type="radio" name="phytotoxicity" value="نعم، أثر بشكل واضح على جودة المنتوج والمردودية" required /> نعم، أثر بشكل واضح على جودة المنتوج والمردودية</label>
+            <label class="option-tile"><input type="radio" name="phytotoxicity" value="لاحظت تأثيراً طفيفاً في بعض المواسم" /> لاحظت تأثيراً طفيفاً في بعض المواسم</label>
+            <label class="option-tile"><input type="radio" name="phytotoxicity" value="لا، لم ألاحظ ذلك" /> لا، لم ألاحظ ذلك</label>
+          </div>
+        </div>
+
+        <div class="q-group">
+          <span class="q-label">س6. كم تنفق تقريباً في الهكتار الواحد خلال الموسم على مبيدات الأعشاب + اليد العاملة للتعشيب؟ <span class="req">*</span></span>
+          <div class="options-grid">
+            <label class="option-tile"><input type="radio" name="weeding_cost_ha" value="أقل من 20,000 دج (أقل من 2 مليون سنتيم)" required /> أقل من 20,000 دج (أقل من 2 مليون سنتيم / هكتار)</label>
+            <label class="option-tile"><input type="radio" name="weeding_cost_ha" value="20,000 إلى 50,000 دج (2 إلى 5 مليون سنتيم)" /> من 20,000 إلى 50,000 دج (2 إلى 5 مليون سنتيم / هكتار)</label>
+            <label class="option-tile"><input type="radio" name="weeding_cost_ha" value="50,000 إلى 100,000 دج (5 إلى 10 مليون سنتيم)" /> من 50,000 إلى 100,000 دج (5 إلى 10 مليون سنتيم / هكتار)</label>
+            <label class="option-tile"><input type="radio" name="weeding_cost_ha" value="أكثر من 100,000 دج (أكثر من 10 مليون سنتيم)" /> أكثر من 100,000 دج (أكثر من 10 مليون سنتيم / هكتار)</label>
+          </div>
+        </div>
+
+        <div class="q-group">
+          <span class="q-label">س7. كم تبلغ المسافة التقريبية بين خطوط الزراعة (من منتصف الساقية إلى الساقية المجاورة)؟</span>
+          <span class="q-hint">اختياري — مهم جداً لضبط عرض مسار الروبوت فوق مصاطب البطاطا والخضر</span>
+          <div class="options-grid two-col">
+            <label class="option-tile"><input type="radio" name="row_spacing" value="65 – 70 سم" /> حوالي 65 – 70 سم</label>
+            <label class="option-tile"><input type="radio" name="row_spacing" value="75 – 80 سم" /> حوالي 75 – 80 سم</label>
+            <label class="option-tile"><input type="radio" name="row_spacing" value="أكثر من 80 سم" /> أكثر من 80 سم</label>
+            <label class="option-tile"><input type="radio" name="row_spacing" value="بذر مباشر للحبوب (بدون مصاطب)" /> أزرع الحبوب (بذر مباشر بدون مصاطب)</label>
+          </div>
+        </div>
+
+        <div class="q-group">
+          <span class="q-label">س8. ما هي أكبر مشكلة يومية تتمنى أن يحلها لك الروبوت أو التكنولوجيا الفلاحية أولاً؟ <span class="req">*</span></span>
+          <span class="q-hint">اختر أهم خيارين (بحد أقصى 2)</span>
+          <div class="options-grid">
+            <label class="option-tile"><input type="checkbox" name="top_priorities" value="تقليص فاتورة المبيدات وحماية المحصول من الإجهاد الكيميائي" /> تقليص فاتورة المبيدات وحماية المحصول من الإجهاد الكيميائي</label>
+            <label class="option-tile"><input type="checkbox" name="top_priorities" value="الدخول للحقل المبلل بدون دكّ التربة" /> الدخول للحقل المبلل بدون دكّ التربة (بديل خفيف للجرار)</label>
+            <label class="option-tile"><input type="checkbox" name="top_priorities" value="تقليل الحاجة لليد العاملة في التعشيب" /> تقليل الحاجة لليد العاملة في التعشيب</label>
+            <label class="option-tile"><input type="checkbox" name="top_priorities" value="مراقبة رطوبة التربة وتقنين السقي والكهرباء/المازوت (Agri-Nodes)" /> مراقبة رطوبة التربة وتقنين السقي والكهرباء/المازوت (أوتاد استشعار ذكية)</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-num">3</div>
+          <h2>نموذج الخدمة والتجربة الميدانية (Pilot)</h2>
+        </div>
+
+        <div class="q-group">
+          <span class="q-label">س9. إذا توفرت خدمة رش انتقائي بروبوت خفيف عبر تعاونية فلاحية (دفع مقابل الهكتار بدون شراء الروبوت)، هل تفضل هذا النموذج؟ <span class="req">*</span></span>
+          <div class="options-grid">
+            <label class="option-tile"><input type="radio" name="business_model" value="نعم، الدفع كخدمة بالهكتار (RaaS)" required /> نعم، أفضل الدفع كخدمة بالهكتار بشرط أن تكون أوفر من الطريقة الحالية</label>
+            <label class="option-tile"><input type="radio" name="business_model" value="شراء أوتاد استشعار الري أولاً بتكلفة بسيطة" /> أفضل شراء جهاز استشعار للري أولاً بتكلفة بسيطة لتجربة التكنولوجيا</label>
+            <label class="option-tile"><input type="radio" name="business_model" value="الشراء الجماعي عبر تعاونية فلاحية" /> أفضل الشراء الجماعي عبر تعاونية فلاحية</label>
+            <label class="option-tile"><input type="radio" name="business_model" value="لست مهتماً حالياً" /> لست مهتماً حالياً</label>
+          </div>
+        </div>
+
+        <div class="q-group">
+          <span class="q-label">س10. هل تقبل استضافة تجربة ميدانية مجانية تماماً على قطعة صغيرة (ربع هكتار) بالماء الملون أو مبيد انتقائي آمن لمقارنة النتائج؟ <span class="req">*</span></span>
+          <div class="options-grid">
+            <label class="option-tile"><input type="radio" name="pilot_interest" value="نعم، يسعدني ذلك" required /> نعم، يسعدني ذلك (سأترك رقم الهاتف للتواصل)</label>
+            <label class="option-tile"><input type="radio" name="pilot_interest" value="ربما لاحقاً بعد رؤية فيديو للنموذج الأولي" /> ربما لاحقاً بعد رؤية فيديو للنموذج الأولي</label>
+            <label class="option-tile"><input type="radio" name="pilot_interest" value="لا، شكراً" /> لا، شكراً</label>
+          </div>
+        </div>
+
+        <div class="q-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div>
+            <label class="q-label" for="respondentName">الاسم أو اللقب (اختياري)</label>
+            <input type="text" id="respondentName" name="respondent_name" placeholder="الاسم الكامل" />
+          </div>
+          <div>
+            <label class="q-label" for="phone">رقم الهاتف — واتساب / تليجرام (اختياري)</label>
+            <input type="tel" id="phone" name="phone" dir="ltr" placeholder="05 / 06 / 07 ..." />
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Specialist Optional -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-num">4</div>
+          <h2>قسم خاص بالمختصين في الميكانيك والهندسة</h2>
+          <span class="opt">اختياري</span>
+        </div>
+
+        <button type="button" class="toggle-btn" id="toggleSpecialist">
+          <span>هل أنت مختص في الميكانيك أو الهندسة وتود إضافة رأيك التقني؟</span>
+          <span id="toggleIcon">+ فتح القسم</span>
+        </button>
+
+        <div id="specialistFields" class="hidden" style="margin-top:18px;">
+          <div class="q-group">
+            <label class="q-label" for="mechFailure">س11. ما هو أكبر عطل ميكانيكي تتوقعه لروبوت خفيف (&le; 28 كغ) يعمل في التربة الجزائرية (طين، رمل، غبار)؟</label>
+            <textarea id="mechFailure" name="mech_failure_risk" placeholder="اكتب رأيك أو ملاحظتك الميكانيكية هنا..."></textarea>
+          </div>
+
+          <div class="q-group">
+            <label class="q-label" for="mechAdvice">س12. هل لديك أي نصيحة حول التصنيع المحلي للهيكل أو نظام العجلات أو نقاط الضعف التي يجب تفاديها قبل بناء النموذج الأولي؟</label>
+            <textarea id="mechAdvice" name="mech_fabrication_advice" placeholder="أي نصيحة عملية حول المواد أو الورشات المحلية أو الصيانة..."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <div id="formError" class="status-banner status-error hidden" style="margin-bottom:14px;"></div>
+
+      <div class="actions">
+        <button type="submit" class="btn-submit" id="submitBtn">إرسال الإجابات والمساهمة في البحث</button>
+      </div>
+    </form>
+
+    <!-- Success View -->
+    <section class="card success-card hidden" id="successCard">
+      <div class="success-icon">✓</div>
+      <h2>شكراً جزيلاً لمشاركتكم القيّمة!</h2>
+      <p id="successMsg">تم تسجيل إجاباتكم بنجاح في قاعدة بيانات مشروع <strong>NHSAST AgriBot</strong>. مساهمتكم تساعدنا مباشرة في تطوير حل فلاحي جزائري عملي وموثوق.</p>
+      <div id="demoNotice" class="demo-note hidden">
+        <strong>وضع المعاينة المحلية (لم يُربط الرابط بعد):</strong> تم حفظ الإجابة محلياً في المتصفح. لربط الموقع بجدول Google Sheets أو قاعدة بيانات SQL، ضع رابط الـ Endpoint في المتغير <code>SUBMIT_ENDPOINT_URL</code> داخل الكود.
+      </div>
+      <div style="margin-top:18px;">
+        <button type="button" class="btn-secondary" id="resetBtn">إرسال استمارة جديدة</button>
+        <button type="button" class="btn-secondary hidden" id="exportCsvBtn">تحميل الإجابات المحلية (CSV)</button>
+      </div>
+    </section>
+
+    <footer>
+      فريق البحث — المدرسة الوطنية العليا لتكنولوجيا الأنظمة المستقلة (NHSAST) | سيدي عبد الله، الجزائر © 2026
+    </footer>
+  </div>
+
+  <script>
+    /**
+     * =========================================================================
+     * BACKEND CONFIGURATION (WORKS WITH BOTH GOOGLE APPS SCRIPT & ANTIGRAVITY SQL API)
+     * =========================================================================
+     * Option A (Direct to Google Sheets): Paste your Google Apps Script Web App URL
+     *   e.g. "https://script.google.com/macros/s/AKfycb.../exec"
+     * Option B (Antigravity SQL + Sheets Sync): Paste your deployed API route
+     *   e.g. "https://your-agribot-api.vercel.app/api/submit"
+     * Leave as "" to test offline/demo mode with local CSV export.
+     */
+    const SUBMIT_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwkMhOv-U-g1rP7JZ18HpMcpOkmjWMyxll-JI1Jtcr7ohAPrzm1W0t-DKgsddhekbLb/exec";
+
+    const form = document.getElementById("agriForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const formError = document.getElementById("formError");
+    const successCard = document.getElementById("successCard");
+    const demoNotice = document.getElementById("demoNotice");
+    const exportCsvBtn = document.getElementById("exportCsvBtn");
+    const progressWrap = document.getElementById("progressWrap");
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+
+    // Toggle "Other" crop input
+    const cropOtherCheck = document.getElementById("cropOtherCheck");
+    const cropOtherText = document.getElementById("cropOtherText");
+    cropOtherCheck.addEventListener("change", () => {
+      cropOtherText.classList.toggle("hidden", !cropOtherCheck.checked);
+      if (cropOtherCheck.checked) cropOtherText.focus();
+    });
+
+    // Limit Q8 top priorities to max 2 selections
+    const priorityBoxes = document.querySelectorAll('input[name="top_priorities"]');
+    priorityBoxes.forEach(cb => {
+      cb.addEventListener("change", () => {
+        const checked = document.querySelectorAll('input[name="top_priorities"]:checked');
+        if (checked.length > 2) {
+          cb.checked = false;
+          showError("يرجى اختيار أولويتين (2) بحد أقصى في السؤال الثامن.");
+        } else {
+          hideError();
+        }
+        updateProgress();
+      });
+    });
+
+    // Specialist section toggle
+    const toggleBtn = document.getElementById("toggleSpecialist");
+    const specialistFields = document.getElementById("specialistFields");
+    const toggleIcon = document.getElementById("toggleIcon");
+    toggleBtn.addEventListener("click", () => {
+      const isHidden = specialistFields.classList.toggle("hidden");
+      toggleIcon.textContent = isHidden ? "+ فتح القسم" : "− إخفاء القسم";
+    });
+
+    // Live Progress Calculation (based on 8 required questions)
+    function updateProgress() {
+      let done = 0;
+      const total = 8;
+      if (document.getElementById("wilaya").value.trim().length > 1) done++;
+      if (document.querySelectorAll('input[name="crops"]:checked').length > 0) done++;
+      if (document.querySelector('input[name="farm_size"]:checked')) done++;
+      if (document.querySelector('input[name="compaction_issue"]:checked')) done++;
+      if (document.querySelector('input[name="phytotoxicity"]:checked')) done++;
+      if (document.querySelector('input[name="weeding_cost_ha"]:checked')) done++;
+      if (document.querySelectorAll('input[name="top_priorities"]:checked').length > 0) done++;
+      if (document.querySelector('input[name="business_model"]:checked') && document.querySelector('input[name="pilot_interest"]:checked')) done++;
+
+      const pct = Math.round((done / total) * 100);
+      progressFill.style.width = pct + "%";
+      progressText.textContent = pct + "% مكتمل";
+    }
+
+    form.addEventListener("input", updateProgress);
+    form.addEventListener("change", updateProgress);
+
+    function showError(msg) {
+      formError.textContent = msg;
+      formError.classList.remove("hidden");
+      formError.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function hideError() {
+      formError.classList.add("hidden");
+    }
+
+    // Form Submission Handler
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideError();
+
+      const wilaya = document.getElementById("wilaya").value.trim();
+      const cropsChecked = Array.from(document.querySelectorAll('input[name="crops"]:checked')).map(c => c.value);
+      const farmSize = document.querySelector('input[name="farm_size"]:checked')?.value || "";
+      const compaction = document.querySelector('input[name="compaction_issue"]:checked')?.value || "";
+      const phyto = document.querySelector('input[name="phytotoxicity"]:checked')?.value || "";
+      const costHa = document.querySelector('input[name="weeding_cost_ha"]:checked')?.value || "";
+      const rowSpacing = document.querySelector('input[name="row_spacing"]:checked')?.value || "غير محدد";
+      const priorities = Array.from(document.querySelectorAll('input[name="top_priorities"]:checked')).map(c => c.value);
+      const bizModel = document.querySelector('input[name="business_model"]:checked')?.value || "";
+      const pilot = document.querySelector('input[name="pilot_interest"]:checked')?.value || "";
+
+      if (!wilaya) return showError("يرجى كتابة الولاية أو المنطقة الفلاحية (س1).");
+      if (cropsChecked.length === 0) return showError("يرجى اختيار محصول واحد على الأقل (س2).");
+      if (!farmSize) return showError("يرجى تحديد المساحة المزروعة تقريباً (س3).");
+      if (!compaction) return showError("يرجى الإجابة على سؤال دكّ التربة (س4).");
+      if (!phyto) return showError("يرجى الإجابة على سؤال تأثير المبيدات على المنتوج (س5).");
+      if (!costHa) return showError("يرجى تحديد التكلفة التقريبية للهكتار (س6).");
+      if (priorities.length === 0) return showError("يرجى اختيار أولوية واحدة أو اثنتين في السؤال الثامن (س8).");
+      if (!bizModel) return showError("يرجى اختيار نموذج الخدمة المفضل (س9).");
+      if (!pilot) return showError("يرجى تحديد رأيكم حول التجربة الميدانية المجانية (س10).");
+
+      const cropOtherVal = cropOtherText.value.trim();
+      if (cropOtherCheck.checked && cropOtherVal) {
+        cropsChecked.push("أخرى: " + cropOtherVal);
+      }
+
+      const payload = {
+        submitted_at: new Date().toISOString(),
+        wilaya,
+        crops: cropsChecked.join(" | "),
+        farm_size: farmSize,
+        compaction_issue: compaction,
+        phytotoxicity: phyto,
+        weeding_cost_ha: costHa,
+        row_spacing: rowSpacing,
+        top_priorities: priorities.join(" | "),
+        business_model: bizModel,
+        pilot_interest: pilot,
+        respondent_name: document.getElementById("respondentName").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        mech_failure_risk: document.getElementById("mechFailure").value.trim(),
+        mech_fabrication_advice: document.getElementById("mechAdvice").value.trim()
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "جارٍ الإرسال...";
+
+      try {
+        if (SUBMIT_ENDPOINT_URL) {
+          // Use text/plain + redirect: "follow" for Google Apps Script Web Apps (avoids CORS preflight)
+          const res = await fetch(SUBMIT_ENDPOINT_URL, {
+            method: "POST",
+            redirect: "follow",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const resultText = await res.text();
+          try {
+            const parsed = JSON.parse(resultText);
+            if (parsed.status === "error") {
+              throw new Error(parsed.message || "Apps Script Error");
+            }
+          } catch (parseErr) {
+            if (parseErr.message && parseErr.message !== "Unexpected end of JSON input" && !parseErr.message.includes("JSON")) {
+              throw parseErr;
+            }
+          }
+        } else {
+          // Offline / Demo fallback: save locally so user can test immediately
+          const existing = JSON.parse(localStorage.getItem("agribot_surveys") || "[]");
+          existing.push(payload);
+          localStorage.setItem("agribot_surveys", JSON.stringify(existing));
+          demoNotice.classList.remove("hidden");
+          exportCsvBtn.classList.remove("hidden");
+        }
+
+        form.classList.add("hidden");
+        progressWrap.classList.add("hidden");
+        successCard.classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        showError("حدث خطأ أثناء الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مجدداً.");
+        console.error(err);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "إرسال الإجابات والمساهمة في البحث";
+      }
+    });
+
+    // Reset button
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      form.reset();
+      cropOtherText.classList.add("hidden");
+      successCard.classList.add("hidden");
+      form.classList.remove("hidden");
+      progressWrap.classList.remove("hidden");
+      updateProgress();
+    });
+
+    // Local CSV Export (for testing before live endpoint is connected)
+    exportCsvBtn.addEventListener("click", () => {
+      const rows = JSON.parse(localStorage.getItem("agribot_surveys") || "[]");
+      if (!rows.length) return;
+      const headers = Object.keys(rows[0]);
+      const csvLines = [
+        "\uFEFF" + headers.join(","),
+        ...rows.map(r => headers.map(h => `"${String(r[h] || "").replace(/"/g, '""')}"`).join(","))
+      ];
+      const blob = new Blob([csvLines.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "nhsast_agribot_farmer_surveys.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

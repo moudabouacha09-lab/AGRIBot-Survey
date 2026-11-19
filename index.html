@@ -745,25 +745,13 @@
 
       try {
         if (SUBMIT_ENDPOINT_URL) {
-          // Use text/plain + redirect: "follow" for Google Apps Script Web Apps (avoids CORS preflight)
-          const res = await fetch(SUBMIT_ENDPOINT_URL, {
+          // Use mode: "no-cors" + text/plain so GitHub Pages -> Google Apps Script never fails on CORS redirect
+          await fetch(SUBMIT_ENDPOINT_URL, {
             method: "POST",
-            redirect: "follow",
+            mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
           });
-          if (!res.ok) throw new Error("HTTP " + res.status);
-          const resultText = await res.text();
-          try {
-            const parsed = JSON.parse(resultText);
-            if (parsed.status === "error") {
-              throw new Error(parsed.message || "Apps Script Error");
-            }
-          } catch (parseErr) {
-            if (parseErr.message && parseErr.message !== "Unexpected end of JSON input" && !parseErr.message.includes("JSON")) {
-              throw parseErr;
-            }
-          }
         } else {
           // Offline / Demo fallback: save locally so user can test immediately
           const existing = JSON.parse(localStorage.getItem("agribot_surveys") || "[]");

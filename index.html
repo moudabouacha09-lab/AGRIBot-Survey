@@ -601,7 +601,7 @@
     </section>
 
     <footer>
-      فريق البحث — المدرسة الوطنية العليا لتكنولوجيا الأنظمة المستقلة (NHSAST) | سيدي عبد الله، الجزائر © 2026
+      فريق البحث — المدرسة الوطنية العليا لتكنولوجيا الأنظمة المستقلة (NHSAST) | سيدي عبد الله، الجزائر © 2026 (v3)
     </footer>
   </div>
 
@@ -745,15 +745,24 @@
 
       try {
         if (SUBMIT_ENDPOINT_URL) {
-          // Use mode: "no-cors" + text/plain so GitHub Pages -> Google Apps Script never fails on CORS redirect
-          await fetch(SUBMIT_ENDPOINT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(payload)
-          });
+          const bodyStr = JSON.stringify(payload);
+          try {
+            await fetch(SUBMIT_ENDPOINT_URL, {
+              method: "POST",
+              mode: "no-cors",
+              keepalive: true,
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: bodyStr
+            });
+          } catch (fetchErr) {
+            // Fallback to sendBeacon if fetch is blocked by an extension or redirect quirk
+            const sent = navigator.sendBeacon && navigator.sendBeacon(
+              SUBMIT_ENDPOINT_URL,
+              new Blob([bodyStr], { type: "text/plain;charset=utf-8" })
+            );
+            if (!sent) throw fetchErr;
+          }
         } else {
-          // Offline / Demo fallback: save locally so user can test immediately
           const existing = JSON.parse(localStorage.getItem("agribot_surveys") || "[]");
           existing.push(payload);
           localStorage.setItem("agribot_surveys", JSON.stringify(existing));
@@ -766,8 +775,8 @@
         successCard.classList.remove("hidden");
         window.scrollTo({ top: 0, behavior: "smooth" });
       } catch (err) {
-        showError("حدث خطأ أثناء الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مجدداً.");
-        console.error(err);
+        showError("حدث خطأ أثناء الإرسال (" + (err && err.message ? err.message : "Network Error") + "). يرجى تعطيل مانع الإعلانات أو المحاولة مجدداً.");
+        console.error("AgriBot Submit Error:", err);
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "إرسال الإجابات والمساهمة في البحث";
